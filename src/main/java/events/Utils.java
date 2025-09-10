@@ -43,4 +43,9 @@ public class Utils {
 	public static boolean isAdmin(Member member) {
 		return member.getRoles().contains(member.getGuild().getRoleById("1410989244276805764")) || member.getRoles().contains(member.getGuild().getRoleById("1410989547285909634"));
 	}
+
+	@SuppressWarnings("DataFlowIssue")
+	public static boolean isOP(ThreadChannel channel, Member member) {
+		return channel.getOwner().equals(member);
+	}
 }
