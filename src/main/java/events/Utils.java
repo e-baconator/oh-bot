@@ -29,7 +29,7 @@ public class Utils {
 	 * @param remove the name of the tag to be removed from the thread channel
 	 * @param add the name of the tag to be added to the thread channel
 	 */
-	public static void removeAndAddTag(ThreadChannel channel, String remove, String add) {
+	public static void removeAndAddTag(ThreadChannel channel, String remove, String add, String newName) {
 		ForumChannel parent = channel.getParentChannel().asForumChannel();
 		List<ForumTag> appliedTags = channel.getAppliedTags();
 		ArrayList<ForumTag> newAppliedTags = new ArrayList<>(appliedTags);
@@ -40,7 +40,12 @@ public class Utils {
 		if(!add.isEmpty()) {
 			newAppliedTags.add(Utils.getTagByName(add, parent));
 		}
-		channel.getManager().setAppliedTags(newAppliedTags).queue();
+
+		String name = channel.getName();
+		if(!newName.isEmpty()) {
+			name = newName;
+		}
+		channel.getManager().setAppliedTags(newAppliedTags).setName(newName).queue();
 	}
 
 	/**

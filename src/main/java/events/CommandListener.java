@@ -17,11 +17,8 @@ public class CommandListener extends ListenerAdapter {
 					case "claim" -> {
 						if(Utils.isStaff(e.getMember())) {
 							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
-								// rename channel to include the TA name
-								threadChannel.getManager().setName("[TA: " + e.getMember().getNickname() + "] " + threadChannel.getName()).queue();
-
-								// apply correct tag
-								Utils.removeAndAddTag(threadChannel, "open", "claimed");
+								// apply correct tag + rename channel to include the TA name
+								Utils.removeAndAddTag(threadChannel, "open", "claimed", "[TA: " + e.getMember().getNickname() + "] " + threadChannel.getName());
 
 								// edit bot's message
 								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
@@ -52,13 +49,10 @@ public class CommandListener extends ListenerAdapter {
 								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
 								String[] botMessageSplit = threadChannel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
 								if(botMessageSplit[botMessageSplit.length - 1].equals(e.getAuthor().getId()) || Utils.isAdmin(e.getMember())) {
-									// remove TA name
+									// apply correct tag + remove TA name
 									String currentName = threadChannel.getName();
 									String newName = currentName.replaceFirst("^\\[TA: [^]]+] ", "");
-									threadChannel.getManager().setName(newName).queue();
-
-									// apply correct tag
-									Utils.removeAndAddTag(threadChannel, "claimed", "open");
+									Utils.removeAndAddTag(threadChannel, "claimed", "open", newName);
 
 									// edit bot's message
 									String newMessage = """
@@ -87,17 +81,15 @@ public class CommandListener extends ListenerAdapter {
 								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
 								String[] botMessageSplit = threadChannel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
 								if(botMessageSplit[botMessageSplit.length - 1].equals(e.getAuthor().getId()) || Utils.isAdmin(e.getMember()) || Utils.isOP(threadChannel, e.getMember())) {
-									// remove TA name
+									// apply correct tags + remove TA name
 									String currentName = threadChannel.getName();
 									String newName = currentName.replaceFirst("^\\[TA: [^]]+]", "");
 									newName = "[CLOSED] " + newName;
-									threadChannel.getManager().setName(newName).queue();
 
-									// apply correct tags
 									if(threadChannel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
-										Utils.removeAndAddTag(threadChannel, "open", "closed");
+										Utils.removeAndAddTag(threadChannel, "open", "closed", newName);
 									} else {
-										Utils.removeAndAddTag(threadChannel, "claimed", "closed");
+										Utils.removeAndAddTag(threadChannel, "claimed", "closed", newName);
 									}
 
 
@@ -125,13 +117,10 @@ public class CommandListener extends ListenerAdapter {
 					case "reopen" -> {
 						if(Utils.isAdmin(e.getMember()) || Utils.isOP(threadChannel, e.getMember())) {
 							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("closed", parent))) {
-								// remove CLOSED tag
+								// apply correct tags + remove CLOSED name
 								String currentName = threadChannel.getName();
 								String newName = currentName.replaceFirst("^\\[CLOSED] ", "");
-								threadChannel.getManager().setName(newName).queue();
-
-								// apply correct tags
-								Utils.removeAndAddTag(threadChannel, "closed", "open");
+								Utils.removeAndAddTag(threadChannel, "closed", "open", newName);
 
 								// edit bot's message
 								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
