@@ -9,23 +9,22 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class CommandListener extends ListenerAdapter {
 	@SuppressWarnings("DataFlowIssue")
 	public void onMessageReceived(MessageReceivedEvent e) {
-		if(e.getMessage().getContentRaw().startsWith("!")) {
+		if(!e.getAuthor().isBot() && e.getMessage().getContentRaw().startsWith("!")) {
 			String[] message = e.getMessage().getContentRaw().toLowerCase().substring(1).split(" ");
-			if(e.getChannel() instanceof ThreadChannel channel && channel.getParentChannel().getId().equals("1414699886124728370")) {
-				ForumChannel parent = channel.getParentChannel().asForumChannel();
+			if(e.getChannel() instanceof ThreadChannel threadChannel && threadChannel.getParentChannel().getId().equals("1414699886124728370")) {
+				ForumChannel parent = threadChannel.getParentChannel().asForumChannel();
 				switch(message[0]) {
 					case "claim" -> {
 						if(Utils.isStaff(e.getMember())) {
-							if(channel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
+							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
 								// rename channel to include the TA name
-								channel.getManager().setName("[TA: " + e.getMember().getNickname() + "] " + channel.getName()).queue();
+								threadChannel.getManager().setName("[TA: " + e.getMember().getNickname() + "] " + threadChannel.getName()).queue();
 
 								// apply correct tag
-								Utils.removeTag(channel, "open");
-								Utils.addTag(channel, "claimed");
+								Utils.removeAndAddTag(threadChannel, "open", "claimed");
 
 								// edit bot's message
-								Message botMessage = channel.retrievePinnedMessages().complete().getFirst();
+								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
 								String newMessage = """
 										**CLAIMED TICKET**
 										<@%s> has claimed this ticket.
@@ -48,19 +47,18 @@ public class CommandListener extends ListenerAdapter {
 					}
 					case "unclaim" -> {
 						if(Utils.isStaff(e.getMember())) {
-							if(channel.getAppliedTags().contains(Utils.getTagByName("claimed", parent))) {
+							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("claimed", parent))) {
 								// check if the person who claimed the ticket is the person who is running the command
-								Message botMessage = channel.retrievePinnedMessages().complete().getFirst();
-								String[] botMessageSplit = channel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
+								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
+								String[] botMessageSplit = threadChannel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
 								if(botMessageSplit[botMessageSplit.length - 1].equals(e.getAuthor().getId()) || Utils.isAdmin(e.getMember())) {
 									// remove TA name
-									String currentName = channel.getName();
+									String currentName = threadChannel.getName();
 									String newName = currentName.replaceFirst("^\\[TA: [^]]+] ", "");
-									channel.getManager().setName(newName).queue();
+									threadChannel.getManager().setName(newName).queue();
 
 									// apply correct tag
-									Utils.removeTag(channel, "claimed");
-									Utils.addTag(channel, "open");
+									Utils.removeAndAddTag(threadChannel, "claimed", "open");
 
 									// edit bot's message
 									String newMessage = """
@@ -83,52 +81,60 @@ public class CommandListener extends ListenerAdapter {
 						}
 					}
 					case "close" -> {
-						if(Utils.isStaff(e.getMember()) || Utils.isOP(channel, e.getMember())) {
-							// check if the person who claimed the ticket is the person who is running the command, or the original poster
-							Message botMessage = channel.retrievePinnedMessages().complete().getFirst();
-							String[] botMessageSplit = channel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
-							if(botMessageSplit[botMessageSplit.length - 1].equals(e.getAuthor().getId()) || Utils.isAdmin(e.getMember()) || Utils.isOP(channel, e.getMember())) {
-								// remove TA name
-								String currentName = channel.getName();
-								String newName = currentName.replaceFirst("^\\[TA: [^]]+]", "[CLOSED]");
-								channel.getManager().setName(newName).queue();
+						if(Utils.isStaff(e.getMember()) || Utils.isOP(threadChannel, e.getMember())) {
+							if(!threadChannel.getAppliedTags().contains(Utils.getTagByName("closed", parent))) {
+								// check if the person who claimed the ticket is the person who is running the command, or the original poster
+								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
+								String[] botMessageSplit = threadChannel.retrievePinnedMessages().complete().getFirst().getContentRaw().split("\n");
+								if(botMessageSplit[botMessageSplit.length - 1].equals(e.getAuthor().getId()) || Utils.isAdmin(e.getMember()) || Utils.isOP(threadChannel, e.getMember())) {
+									// remove TA name
+									String currentName = threadChannel.getName();
+									String newName = currentName.replaceFirst("^\\[TA: [^]]+]", "");
+									newName = "[CLOSED] " + newName;
+									threadChannel.getManager().setName(newName).queue();
 
-								// apply correct tags
-								Utils.removeTag(channel, "claimed");
-								Utils.addTag(channel, "closed");
+									// apply correct tags
+									if(threadChannel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
+										Utils.removeAndAddTag(threadChannel, "open", "closed");
+									} else {
+										Utils.removeAndAddTag(threadChannel, "claimed", "closed");
+									}
 
-								// edit bot's message
-								String newMessage = """
-										**CLOSED TICKET**
-										<@%s> has completed this ticket.
-										
-										OP: To reopen this ticket, run `!reopen` in this channel.
-										""".formatted(e.getAuthor().getId());
-								botMessage.editMessage(newMessage).queue();
 
-								// feedback message
-								e.getMessage().reply("You have successfully closed this ticket!").mentionRepliedUser(false).queue();
+									// edit bot's message
+									String newMessage = """
+											**CLOSED TICKET**
+											<@%s> has completed this ticket.
+											
+											OP: To reopen this ticket, run `!reopen` in this channel.
+											""".formatted(e.getAuthor().getId());
+									botMessage.editMessage(newMessage).queue();
+
+									// feedback message
+									e.getMessage().reply("You have successfully closed this ticket!").mentionRepliedUser(false).queue();
+								} else {
+									e.getMessage().reply("You are not the person who claimed this ticket, or the original poster!").mentionRepliedUser(false).queue();
+								}
 							} else {
-								e.getMessage().reply("You are not the person who claimed this ticket, or the original poster!").mentionRepliedUser(false).queue();
+								e.getMessage().reply("This ticket is already closed!").mentionRepliedUser(false).queue();
 							}
 						} else {
 							e.getMessage().reply(":no_entry: **403 FORBIDDEN** :no_entry:\nYou do not have permission to run this command.").mentionRepliedUser(false).queue();
 						}
 					}
 					case "reopen" -> {
-						if(Utils.isAdmin(e.getMember()) || Utils.isOP(channel, e.getMember())) {
-							if(channel.getAppliedTags().contains(Utils.getTagByName("closed", parent))) {
+						if(Utils.isAdmin(e.getMember()) || Utils.isOP(threadChannel, e.getMember())) {
+							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("closed", parent))) {
 								// remove CLOSED tag
-								String currentName = channel.getName();
+								String currentName = threadChannel.getName();
 								String newName = currentName.replaceFirst("^\\[CLOSED] ", "");
-								channel.getManager().setName(newName).queue();
+								threadChannel.getManager().setName(newName).queue();
 
 								// apply correct tags
-								Utils.removeTag(channel, "closed");
-								Utils.addTag(channel, "open");
+								Utils.removeAndAddTag(threadChannel, "closed", "open");
 
 								// edit bot's message
-								Message botMessage = channel.retrievePinnedMessages().complete().getFirst();
+								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
 								String newMessage = """
 										**OPEN TICKET**
 										TAs: To claim this post, run `!claim` in this channel.
@@ -142,7 +148,7 @@ public class CommandListener extends ListenerAdapter {
 								e.getMessage().reply("This ticket is not closed!").mentionRepliedUser(false).queue();
 							}
 						} else {
-							e.getMessage().reply(":no_entry: **403 FORBIDDEN** :no_entry:\nYou do not have permission to run this command.").mentionRepliedUser(false).queue();
+							e.getMessage().reply("You are not the original poster and cannot reopen this ticket.").mentionRepliedUser(false).queue();
 						}
 					}
 				}

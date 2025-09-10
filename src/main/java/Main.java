@@ -19,14 +19,14 @@ public class Main {
 		String token = env.get("TOKEN");
 
 		Message.suppressContentIntentWarning();
-		JDA jda = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS)
+		JDA jda = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
 				.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.SCHEDULED_EVENTS)
 				.addEventListeners(new CommandListener())
 				.addEventListeners(new TicketCreate())
 				.useSharding(0, 1)
 				.build();
 		jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
-		jda.getPresence().setActivity(Activity.customStatus("Practising violin 40 hours a day.  Sometimes practises 72 hours a day!"));
+		jda.getPresence().setActivity(Activity.customStatus("Following the design recipe!"));
 
 	}
 }

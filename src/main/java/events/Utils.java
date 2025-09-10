@@ -20,32 +20,61 @@ public class Utils {
 		return channel.getAvailableTagsByName(name, true).getFirst();
 	}
 
-	public static void addTag(ThreadChannel channel, String tag) {
+	/**
+	 * Updates the tags associated with a given thread channel by removing a specified tag
+	 * and adding a new one. This method modifies the thread's applied tags list and ensures the changes
+	 * are reflected in the channel by applying these updates through its manager.
+	 *
+	 * @param channel the thread channel whose tags are being modified
+	 * @param remove the name of the tag to be removed from the thread channel
+	 * @param add the name of the tag to be added to the thread channel
+	 */
+	public static void removeAndAddTag(ThreadChannel channel, String remove, String add) {
 		ForumChannel parent = channel.getParentChannel().asForumChannel();
 		List<ForumTag> appliedTags = channel.getAppliedTags();
 		ArrayList<ForumTag> newAppliedTags = new ArrayList<>(appliedTags);
-		newAppliedTags.add(Utils.getTagByName(tag, parent));
+		if(!remove.isEmpty()) {
+			newAppliedTags.remove(Utils.getTagByName(remove, parent));
+		}
+
+		if(!add.isEmpty()) {
+			newAppliedTags.add(Utils.getTagByName(add, parent));
+		}
 		channel.getManager().setAppliedTags(newAppliedTags).queue();
 	}
 
-	public static void removeTag(ThreadChannel channel, String tag) {
-		ForumChannel parent = channel.getParentChannel().asForumChannel();
-		List<ForumTag> appliedTags = channel.getAppliedTags();
-		ArrayList<ForumTag> newAppliedTags = new ArrayList<>(appliedTags);
-		newAppliedTags.remove(Utils.getTagByName(tag, parent));
-		channel.getManager().setAppliedTags(newAppliedTags).queue();
-	}
-
+	/**
+	 * Determines if a given member has a staff role in their guild.
+	 * <br>
+	 * This method checks if the member has any of the predefined staff roles
+	 * in the guild by verifying their role IDs.
+	 *
+	 * @param member the member to be checked for staff roles
+	 * @return true if the member has a staff role, false otherwise
+	 */
 	public static boolean isStaff(Member member) {
 		return member.getRoles().contains(member.getGuild().getRoleById("1410989464506863616")) || member.getRoles().contains(member.getGuild().getRoleById("1410989547285909634"));
 	}
 
+	/**
+	 * Checks if a given member has an admin role in their guild.
+	 * <br>
+	 * This method verifies whether the member possesses any of the predefined admin roles
+	 * by checking their role*/
 	public static boolean isAdmin(Member member) {
 		return member.getRoles().contains(member.getGuild().getRoleById("1410989244276805764")) || member.getRoles().contains(member.getGuild().getRoleById("1410989547285909634"));
 	}
 
-	@SuppressWarnings("DataFlowIssue")
+	/**
+	 * Determines if a given member is the owner (OP) of a specified thread channel.
+	 * <br>
+	 * This method checks if the ID of the owner of the thread channel matches the ID of the provided member.
+	 *
+	 * @param channel the ThreadChannel to check ownership against
+	 * @param member the Member whose ownership is being verified
+	 * @return true if the member is the owner of the thread channel, false otherwise
+	 */
 	public static boolean isOP(ThreadChannel channel, Member member) {
-		return channel.getOwner().equals(member);
+		return channel.getOwnerId().equals(member.getId());
 	}
 }
