@@ -18,7 +18,11 @@ public class CommandListener extends ListenerAdapter {
 						if(Utils.isStaff(e.getMember())) {
 							if(threadChannel.getAppliedTags().contains(Utils.getTagByName("open", parent))) {
 								// apply correct tag + rename channel to include the TA name
-								Utils.removeAndAddTag(threadChannel, "open", "claimed", "[TA: " + e.getMember().getNickname() + "] " + threadChannel.getName());
+								String nickname = e.getMember().getNickname();
+								if(nickname == null) {
+									nickname = e.getMember().getUser().getEffectiveName();
+								}
+								Utils.removeAndAddTag(threadChannel, "open", "claimed", "[TA: " + nickname + "] " + threadChannel.getName());
 
 								// edit bot's message
 								Message botMessage = threadChannel.retrievePinnedMessages().complete().getFirst();
