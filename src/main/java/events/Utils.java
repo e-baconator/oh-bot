@@ -45,7 +45,7 @@ public class Utils {
 		if(!newName.isEmpty()) {
 			name = newName;
 		}
-		channel.getManager().setAppliedTags(newAppliedTags).setName(newName).queue();
+		channel.getManager().setAppliedTags(newAppliedTags).setName(name).queue();
 	}
 
 	/**
