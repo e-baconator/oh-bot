@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class TicketCreate extends ListenerAdapter {
 	public void onChannelCreate(ChannelCreateEvent e) {
 		if(e.getChannel() instanceof ThreadChannel channel && channel.getParentChannel().getId().equals("1414699886124728370")) {
-			Utils.removeAndAddTag(channel, "", "open", "");
+			Utils.editPost(channel, "", "open", "");
 			String message = """
 			**OPEN TICKET**
 			TAs: To claim this post, run `!claim` in this channel.
