@@ -43,8 +43,8 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 		String token = dotenv.get("BOT_TOKEN");
-		String forumChannelId = dotenv.get("FORUM_CHANNEL_ID");
-		String moderatorRoleId = dotenv.get("MOD_ROLE_ID");
+		forumChannelID = dotenv.get("FORUM_CHANNEL_ID");
+		modRoleID = dotenv.get("MOD_ROLE_ID");
 		//Dotenv env = Dotenv.load();
 		//String token = env.get("TOKEN");
 		//forumChannelID = env.get("FORUMCHANNEL");
