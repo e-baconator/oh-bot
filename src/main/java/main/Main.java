@@ -41,11 +41,14 @@ public class Main {
 	private static String modRoleID;
 
 	public static void main(String[] args) throws InterruptedException {
-		Dotenv env = Dotenv.load();
-
-		String token = env.get("TOKEN");
-		forumChannelID = env.get("FORUMCHANNEL");
-		modRoleID = env.get("MODROLE");
+		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+		String token = dotenv.get("BOT_TOKEN");
+		String forumChannelId = dotenv.get("FORUM_CHANNEL_ID");
+		String moderatorRoleId = dotenv.get("MOD_ROLE_ID");
+		//Dotenv env = Dotenv.load();
+		//String token = env.get("TOKEN");
+		//forumChannelID = env.get("FORUMCHANNEL");
+		//modRoleID = env.get("MODROLE");
 
 		Message.suppressContentIntentWarning();
 		JDA jda = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
