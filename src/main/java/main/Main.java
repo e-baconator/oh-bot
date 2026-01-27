@@ -48,7 +48,7 @@ public class Main {
 		
 		// Fallback to dotenv for local development
 		if (token == null) {
-			Dotenv dotenv = Dotenv.load();
+			Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 			token = dotenv.get("BOT_TOKEN");
 			forumChannelID = dotenv.get("FORUM_CHANNEL_ID");
 			modRoleID = dotenv.get("MODERATOR_ROLE_ID");
