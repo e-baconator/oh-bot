@@ -356,7 +356,7 @@ public class CommandListener extends ListenerAdapter {
 				String messageToSend = """
 						# HOW TO USE THIS BOT
 						**Office Hours Tickets**
-						Head over to <#1414699886124728370> and create a post.  A TA will be with you shortly.
+						Head over to <#1450952328516735209> and create a post.  A TA will be with you shortly.
 						
 						**Commands**
 						`!claim` - TAs only.  Claim a ticket as yours.  Only one TA may claim a ticket at a time.
