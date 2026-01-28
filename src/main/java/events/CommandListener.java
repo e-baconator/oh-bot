@@ -206,13 +206,8 @@ public class CommandListener extends ListenerAdapter {
 
 	@SuppressWarnings("DataFlowIssue")
 	public void onMessageReceived(MessageReceivedEvent e) {
-		System.out.println("=== MESSAGE RECEIVED ===");
-    	System.out.println("Author: " + e.getAuthor().getName() + " (bot: " + e.getAuthor().isBot() + ")");
-    	System.out.println("Content: " + e.getMessage().getContentRaw());
-    	System.out.println("Channel: " + e.getChannel().getName() + " (type: " + e.getChannel().getType() + ")");
-		
 		if(!e.getAuthor().isBot() && e.getMessage().getContentRaw().startsWith("!")) {
-			System.out.println("Command detected!");
+			//System.out.println("Command detected!");
 			String[] message = e.getMessage().getContentRaw().toLowerCase().substring(1).split(" ");
 			if(e.getChannel() instanceof ThreadChannel threadChannel && Utils.isForumChannel(threadChannel)) {
 				ForumChannel parent = threadChannel.getParentChannel().asForumChannel();
