@@ -62,14 +62,13 @@ public class Main {
 			        GatewayIntent.MESSAGE_CONTENT
 			    )
 				.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.SCHEDULED_EVENTS)
-				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.addEventListeners(new CommandListener())
 				.addEventListeners(new TicketCreate())
 				.build();
 		jda.awaitReady();
 		jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
 		jda.getPresence().setActivity(Activity.customStatus("Following the design recipe!"));
-		jda.getGuildById("1450952327883260007").loadMembers().onSuccess((member) -> System.out.println("Done"));
+		//jda.getGuildById("1450952327883260007").loadMembers().onSuccess((member) -> System.out.println("Done"));
 	}
 
 	public static String getForumChannelID() {
