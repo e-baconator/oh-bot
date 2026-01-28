@@ -44,7 +44,7 @@ public class Main {
 		// Read directly from system environment variables
 		String token = System.getenv("BOT_TOKEN");
 		forumChannelID = System.getenv("FORUM_CHANNEL_ID");
-		modRoleID = System.getenv("MODERATOR_ROLE_ID");
+		modRoleID = System.getenv("MOD_ROLE_ID");
 		
 		// Fallback to dotenv for local development
 		if (token == null) {
