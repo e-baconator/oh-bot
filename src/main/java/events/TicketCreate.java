@@ -8,8 +8,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class TicketCreate extends ListenerAdapter {
 	@Override
-	public void onThreadRevealed(ThreadRevealedEvent e) {
-		System.out.println("=== THREAD REVEALED EVENT FIRED ===");
+	public void onThreadChannelCreate(ThreadChannelCreateEvent e) {
+		System.out.println("=== THREAD CREATE EVENT FIRED ===");
 		ThreadChannel channel = e.getThread();
 		System.out.println("Thread ID: " + channel.getId());
 		System.out.println("Thread name: " + channel.getName());
