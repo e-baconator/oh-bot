@@ -65,7 +65,7 @@ public class Main {
 		jda.awaitReady();
 		jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
 		jda.getPresence().setActivity(Activity.customStatus("Following the design recipe!"));
-		//jda.getGuildById("1410988823764013117").loadMembers().onSuccess((member) -> System.out.println("Done"));
+		jda.getGuildById("1450952327883260007").loadMembers().onSuccess((member) -> System.out.println("Done"));
 	}
 
 	public static String getForumChannelID() {
