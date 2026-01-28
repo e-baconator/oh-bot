@@ -54,13 +54,17 @@ public class Main {
 			modRoleID = dotenv.get("MODERATOR_ROLE_ID");
 		}
 
-		Message.suppressContentIntentWarning();
-		JDA jda = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_REACTIONS)
+		//Message.suppressContentIntentWarning();
+		JDA jda = JDABuilder.createDefault(token)
+			    .enableIntents(
+			        GatewayIntent.GUILD_MESSAGES,
+			        GatewayIntent.GUILD_MEMBERS,
+			        GatewayIntent.MESSAGE_CONTENT
+			    )
 				.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.SCHEDULED_EVENTS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.addEventListeners(new CommandListener())
 				.addEventListeners(new TicketCreate())
-				.useSharding(0, 1)
 				.build();
 		jda.awaitReady();
 		jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
