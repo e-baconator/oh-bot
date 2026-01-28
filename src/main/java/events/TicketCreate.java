@@ -8,6 +8,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class TicketCreate extends ListenerAdapter {
 	public void onChannelCreate(ChannelCreateEvent e) {
+		System.out.println("=== CHANNEL CREATE EVENT FIRED ===");
+		System.out.println("Channel type: " + e.getChannel().getType());
+		System.out.println("Channel ID: " + e.getChannel().getId());
+		System.out.println("Is ThreadChannel? " + (e.getChannel() instanceof ThreadChannel));
+		
 		if(e.getChannel() instanceof ThreadChannel channel && Utils.isForumChannel(channel)) {
 			Utils.editPost(channel, "", "open", "");
 			String message = """
